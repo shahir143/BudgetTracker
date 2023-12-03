@@ -1,0 +1,44 @@
+body {
+    background-color: #f8f9fa;
+  }
+
+  .container {
+    margin-top: 50px;
+  }
+
+  .col-md-6 {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #007bff;
+    text-align: center;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .form-control {
+    border-radius: 4px;
+  }
+
+  button {
+    margin-top: 10px;
+  }
+
+  hr {
+    border-top: 1px solid #dcdcdc;
+  }
+
+  .text-center a {
+    text-decoration: none;
+    color: #007bff;
+  }
+
+  .text-center a:hover {
+    text-decoration: underline;
+  }
