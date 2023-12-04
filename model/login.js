@@ -10,12 +10,15 @@ const user=sequelize.define('users',{
     },
     userName:{
         type:Sequelize.STRING,
+        allowNull:false
     },
     userEmail:{
         type:Sequelize.STRING,
+        allowNull:false,
     },
     userPassword:{
         type:Sequelize.STRING,
+        allowNull:false,
     }
 })
 

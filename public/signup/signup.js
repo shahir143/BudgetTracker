@@ -17,6 +17,7 @@ myForm.addEventListener('submit',async(e)=>{
         }else{
             alert(signup.data.message);
         }
+        myForm.reset();
     }catch(err){
         console.log(err);
     }
