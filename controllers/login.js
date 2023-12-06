@@ -1,5 +1,6 @@
 const User=require('../model/login');
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken');
 
 exports.signup = async (req, res, next) => {
     try {
@@ -26,29 +27,32 @@ exports.signup = async (req, res, next) => {
     }
 };
 
+function generateTokenAuthorization(user) {
+    const payload = { userId: user.id };
+    const secretKey = process.env.SECRET_KEY;
+    const token = jwt.sign(payload, secretKey);
+    return token;
+}
+
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const existingUser = await User.findOne({ where: { userEmail: email } });
+        const user = await User.findOne({ where: { userEmail: email } });
 
-        if (!existingUser) {
+        if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, existingUser.userPassword);
+        const isPasswordValid = await bcrypt.compare(password, user.userPassword);
 
         if (!isPasswordValid) {
             return res.status(401).json({ success: false, message: 'Password wrong' });
         }
 
-        res.status(200).json({ success: true, message: 'Login successful' });
+        const token = generateTokenAuthorization(user);
+        res.status(200).json({ success: true, message: 'Login successful', token });
     } catch (error) {
         console.error('Error in user login:', error);
         res.status(500).json({ success: false, message: 'Error logging in user' });
     }
 };
-
-
-
-
-	

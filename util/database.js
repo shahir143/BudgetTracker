@@ -1,7 +1,11 @@
 const Sequelize=require('sequelize');
-const sequelize=new Sequelize('expensive-Tracker','root','root',{
+const schema=process.env.DB_SCHEMA;
+const userName=process.env.DB_USERNAME;
+const userPassword=process.env.DB_PASSWORD;
+const db_host=process.env.DB_HOST;
+const sequelize=new Sequelize(schema,userName,userPassword,{
     dialect:'mysql',
-    host:'localhost',
+    host:db_host,
 })
 
 module.exports = sequelize;

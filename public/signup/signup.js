@@ -12,11 +12,8 @@ myForm.addEventListener('submit',async(e)=>{
             password:userPassword.value
         }
         const signup=await axios.post('http://localhost:4000/user/signup',signupData);
-        if(signup.status===200){
-            alert(signup.data.message);
-        }else{
-            alert(signup.data.message);
-        }
+       alert(signup.message);
+       window.location.href('../login/login.html')
         myForm.reset();
     }catch(err){
         console.log(err);

@@ -1,8 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const userRoute = require('./routers/route');
+require('dotenv').config();
+const userRoute = require('./routers/user');
+const expenseRoute=require('./routers/expense')
 const sequelize = require("./util/database");
+const expense=require('./model/expense');
+const loginUser =require('./model/login');
 
 const app = express();
 
@@ -14,6 +18,11 @@ app.use(cors());
 
 // Routes
 app.use('/user', userRoute);
+app.use('/expense', expenseRoute);
+
+expense.belongsTo(loginUser);
+loginUser.hasMany(expense);
+
 
 // 404 Middleware
 app.use((req, res, next) => {
