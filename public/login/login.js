@@ -13,6 +13,8 @@ myForm.addEventListener('submit',async(e)=>{
         const login=await axios.post('http://localhost:4000/user/login',loginData);
         alert(login.data.message);
         localStorage.setItem('token',login.data.token);
+        console.log(login)
+        localStorage.setItem('premium',login.data.Premium);
         window.location.href='../expense/expense.html'
     }catch(err){
         console.log(err);

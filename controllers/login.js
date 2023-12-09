@@ -50,7 +50,7 @@ exports.login = async (req, res, next) => {
         }
 
         const token = generateTokenAuthorization(user);
-        res.status(200).json({ success: true, message: 'Login successful', token });
+        res.status(200).json({ success: true, message: 'Login successful', token ,encryptedId:token, Premium: user.premium,});
     } catch (error) {
         console.error('Error in user login:', error);
         res.status(500).json({ success: false, message: 'Error logging in user' });

@@ -1,12 +1,26 @@
-let form = document.querySelector("#myForm");
-let itemList = document.querySelector("#itemList");
+let form = document.querySelector("#expense-button");
+let itemList = document.querySelector("#user-list");
 
 const userExpenses = document.getElementById('expenses');
 const userDescription = document.getElementById('description');
 const userCategory = document.getElementById('category');
-const token = localStorage.getItem('token');
+const premiumBtn=document.getElementById('premium-button');
+const premiumDiv=document.getElementById('premium-div');
+const logoutBtn=document.getElementById('logout');
 
-form.addEventListener('submit', saveData)
+window.addEventListener('DOMContentLoaded', loadServer);
+form.addEventListener('click', saveData);
+premiumBtn.addEventListener("click",premium);
+logoutBtn.addEventListener("click",serverOut);
+async function serverOut(e) {
+    localStorage.clear();
+
+    const logout = confirm("Are you sure you want to logout?");
+    if (logout) {
+        window.location.href = '../login/login.html';
+    }
+}
+
 async function saveData(e){
     e.preventDefault();
     let obj = {
@@ -15,12 +29,13 @@ async function saveData(e){
         Category: userCategory.value, 
     }
     try {
+        const token = localStorage.getItem('token');
         const response = await axios.post(`http://localhost:4000/expense/addExpense`,obj,{
             headers: {
             Authorization: token
         }});
         console.log('Response from server:', response);
-        const updatedData = response.data;
+        const updatedData = response.data.data;
         displayExpenses(updatedData);
     } catch (error) {
         console.log('Error in saving form', error);
@@ -32,7 +47,10 @@ async function saveData(e){
 function displayExpenses(data) { 
     console.log(data);
     let li = document.createElement('li');
+    li.className="list-group-item"
     li.appendChild(document.createTextNode(`${data.Expenses} - ${data.Category} - ${data.Description} -`));
+    let div = document.createElement('div');
+    div.className="button-group";
     let deleteBtn = document.createElement('button');
     deleteBtn.type="button";
     deleteBtn.className = "btn btn-danger";
@@ -44,13 +62,20 @@ function displayExpenses(data) {
     editBtn.className = 'btn btn-info';
     editBtn.id='edit';
     editBtn.appendChild(document.createTextNode("Edit"));
-    
+    div.appendChild(deleteBtn);
+    div.appendChild(editBtn);
+    li.appendChild(div);
     
     deleteBtn.onclick=async(e) => {
         const target = e.target.parentElement;
         const id=data.id;
+        const token = localStorage.getItem('token');
         try{
-            const user=await axios.delete(`http://localhost:4000/expense/delExpense/${id}`);
+            const user=await axios.delete(`http://localhost:4000/expense/delExpense/${id}`,{
+                headers: {
+                    Authorization: token
+                }
+            });
             itemList.removeChild(target);
         }catch(error){
             console.log(error,"error in deleting ")
@@ -60,6 +85,7 @@ function displayExpenses(data) {
     editBtn.onclick=  async (e) => {
         const target = e.target.parentElement;
         const id = data.id; 
+        const token = localStorage.getItem('token');
         try{
             userExpenses.value=data.Expenses;
             userDescription.value=data.Description;
@@ -71,12 +97,78 @@ function displayExpenses(data) {
             console.log(error,"error in editing ")
         }
     };
-    li.appendChild(deleteBtn);
-    li.appendChild(editBtn);
+    
     itemList.appendChild(li);
 }
-document.addEventListener('DOMContentLoaded', displayData)
+
+async function premium(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axios.get('http://localhost:4000/purchase/premiumMember', {
+            headers: {
+                Authorization: token
+            }
+        });
+        premiumRazor(response.data);
+        }catch (error) {
+             console.error(error);
+        }
+};
+
+const premiumRazor = async (data) => {
+    try{
+        const token = localStorage.getItem('token');
+        var options = {
+            key: data.key_id,
+            order_Id: data.orderData.orderId,
+            handler: async function (response) {
+                console.log("RESPONSE IN HANDLER",response)
+                const updateData=await axios.post('http://localhost:4000/purchase/updatedTransactionstatus', 
+                {
+                    order_id: data.orderData.orderId,
+					payment_id: response.razorpay_payment_id,
+                }, 
+                { headers: { Authorization: token } },);
+                const premiumData=updateData.data.data.Premium;
+                localStorage.setItem("premium",premiumData);
+                if (localStorage.getItem("premium") === 'true') {
+                    premiumDiv.innerHTML = `<h3>Premium User</h3>`;
+                    premiumBtn.removeEventListener("click", premiumRazor);
+                    premiumBtn.disabled = true;
+                }               
+                alert("You are a premium user");
+            }
+        };
+
+        const rzpl = new window.Razorpay(options);
+        await rzpl.open();
+        rzpl.on('payment.failed', async (failedData)=> {
+            console.log(failedData);
+            alert("SOMETHING WENT WRONG");
+        });
+    }catch (error) {
+        console.error(error);
+    }
+};
+        
+
+async function loadServer(e){
+    e.preventDefault();
+    try{
+        const premiumStatus=localStorage.getItem('premium');
+        if(premiumStatus==="true"){
+            premiumDiv.innerHTML = `<h3>Premium User</h3>`;
+            premiumBtn.removeEventListener("click", premiumRazor);
+            premiumBtn.disabled = true;
+        }
+        displayData();
+    }catch(e){
+        console.log(e);
+    }
+}
 async function displayData() {
+    const token = localStorage.getItem('token');
     try {
         
         const dBdata = await axios.get('http://localhost:4000/expense/Expenses', {

@@ -13,7 +13,7 @@ exports.authorizationToken = async (req, res, next) => {
 
         const decodedId = jwt.verify(token, secretKey);
 
-        console.log('decode',decodedId.userId);
+        console.log('decode =',decodedId.userId);
         const loggedUser = await User.findByPk(decodedId.userId );
 
         if (!loggedUser) {

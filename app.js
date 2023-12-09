@@ -4,9 +4,12 @@ const cors = require('cors');
 require('dotenv').config();
 const userRoute = require('./routers/user');
 const expenseRoute=require('./routers/expense')
+const purchaseRoute=require('./routers/purchase')
+
 const sequelize = require("./util/database");
 const expense=require('./model/expense');
 const loginUser =require('./model/login');
+const order = require('./model/order');
 
 const app = express();
 
@@ -19,10 +22,13 @@ app.use(cors());
 // Routes
 app.use('/user', userRoute);
 app.use('/expense', expenseRoute);
+app.use('/purchase', purchaseRoute);
 
-expense.belongsTo(loginUser);
 loginUser.hasMany(expense);
+expense.belongsTo(loginUser);
 
+loginUser.hasMany(order)
+order.belongsTo(loginUser)
 
 // 404 Middleware
 app.use((req, res, next) => {
