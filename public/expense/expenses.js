@@ -7,19 +7,20 @@ const userCategory = document.getElementById('category');
 const premiumBtn=document.getElementById('premium-button');
 const premiumDiv=document.getElementById('premium-div');
 const logoutBtn=document.getElementById('logout');
+const closeBtn=document.getElementById('closeModal');
+const premiumText=document.getElementById('leaderBtn');
 
-window.addEventListener('DOMContentLoaded', loadServer);
+const leaderBoard = document.getElementById('showLeaderboard');
+const showleader = document.getElementById('leaderboardModal');
+const boardList=document.getElementById('leaderboardList');
+
+window.addEventListener('DOMContentLoaded', displayData);
 form.addEventListener('click', saveData);
 premiumBtn.addEventListener("click",premium);
 logoutBtn.addEventListener("click",serverOut);
-async function serverOut(e) {
-    localStorage.clear();
+leaderBoard.addEventListener("click",showBoard);
+closeBtn.addEventListener('click',closeList);
 
-    const logout = confirm("Are you sure you want to logout?");
-    if (logout) {
-        window.location.href = '../login/login.html';
-    }
-}
 
 async function saveData(e){
     e.preventDefault();
@@ -39,9 +40,7 @@ async function saveData(e){
         displayExpenses(updatedData);
     } catch (error) {
         console.log('Error in saving form', error);
-    }
-    
-    
+    }  
 };
 
 function displayExpenses(data) { 
@@ -67,7 +66,7 @@ function displayExpenses(data) {
     li.appendChild(div);
     
     deleteBtn.onclick=async(e) => {
-        const target = e.target.parentElement;
+        const target = e.target.parentElement.parentElement;
         const id=data.id;
         const token = localStorage.getItem('token');
         try{
@@ -76,6 +75,7 @@ function displayExpenses(data) {
                     Authorization: token
                 }
             });
+            console.log(target)
             itemList.removeChild(target);
         }catch(error){
             console.log(error,"error in deleting ")
@@ -83,7 +83,7 @@ function displayExpenses(data) {
     };
 
     editBtn.onclick=  async (e) => {
-        const target = e.target.parentElement;
+        const target = e.target.parentElement.parentElement;
         const id = data.id; 
         const token = localStorage.getItem('token');
         try{
@@ -91,7 +91,9 @@ function displayExpenses(data) {
             userDescription.value=data.Description;
             userCategory.value=data.Category;
             
-            const user=await axios.delete(`http://localhost:4000/expense/delExpense/${id}`);
+            const user=await axios.delete(`http://localhost:4000/expense/delExpense/${id}`,{headers: {
+                Authorization: token
+            }});
             itemList.removeChild(target);
         }catch(error){
             console.log(error,"error in editing ")
@@ -130,12 +132,15 @@ const premiumRazor = async (data) => {
 					payment_id: response.razorpay_payment_id,
                 }, 
                 { headers: { Authorization: token } },);
+                console.log("updateData",updateData);
                 const premiumData=updateData.data.data.Premium;
                 localStorage.setItem("premium",premiumData);
-                if (localStorage.getItem("premium") === 'true') {
-                    premiumDiv.innerHTML = `<h3>Premium User</h3>`;
+                if (premiumData === true) {
+                    premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
                     premiumBtn.removeEventListener("click", premiumRazor);
                     premiumBtn.disabled = true;
+                    leaderBoard.style.display="block";
+                    showleader.style.display="block";
                 }               
                 alert("You are a premium user");
             }
@@ -153,20 +158,6 @@ const premiumRazor = async (data) => {
 };
         
 
-async function loadServer(e){
-    e.preventDefault();
-    try{
-        const premiumStatus=localStorage.getItem('premium');
-        if(premiumStatus==="true"){
-            premiumDiv.innerHTML = `<h3>Premium User</h3>`;
-            premiumBtn.removeEventListener("click", premiumRazor);
-            premiumBtn.disabled = true;
-        }
-        displayData();
-    }catch(e){
-        console.log(e);
-    }
-}
 async function displayData() {
     const token = localStorage.getItem('token');
     try {
@@ -176,18 +167,66 @@ async function displayData() {
                 Authorization: token
             }
         });
-
+        console.log(dBdata.data.userLogin);
         const usersData = dBdata.data;
-        console.log(usersData);
 
-        if (usersData.length < 1) {
-            console.log("No users");
+        const premiumStatus = usersData.isPremium;
+        localStorage.setItem("premium", premiumStatus);
+        console.log("Premium Status:", premiumStatus);
+
+        if (premiumStatus === false) {
+            premiumText.innerHTML = `<h4 id="premium_text">Join Premium </h4>`;
+            leaderBoard.style.display="none";
+            showleader.style.display = "none"; 
+
         } else {
-            for (let i = 0; i < usersData.length; i++) {
-                displayExpenses(usersData[i]);
-            }
+            premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
+            premiumBtn.removeEventListener("click", premiumRazor);
+            premiumBtn.disabled = true;
+        }
+        
+        for (let i = 0; i < usersData.length; i++) {
+            displayExpenses(usersData[i]);
         }
     } catch (error) {
         console.error(error);
+    }
+}
+async function showBoard(){
+    showleader.style.display="block";
+    displayLeaderboard();
+
+}
+async function closeList(){
+    showleader.style.display="none";
+    boardList.innerHTML="";
+}
+async function displayLeaderboard(){
+    const token = localStorage.getItem('token');
+    try{
+        const boardData=await axios.get('http://localhost:4000/premium/leaderboard', {
+            headers: {
+                Authorization: token
+            }
+        });
+        const userdata=boardData.data.leaderBoard;
+        boardData.innerHTML="";
+        userdata.forEach((data)=>{
+            if(data.premium===true){
+            const li=document.createElement('li');
+            li.textContent=`Name : ${data.userName}- Expenses: Rs.${data.totalexpenses}`;
+            boardList.appendChild(li)
+            }   
+        })
+    }catch(err){
+        console.log(err);
+    }
+}
+async function serverOut(e) {
+    e.preventDefault();
+    localStorage.clear();
+    const logout = confirm("Are you sure you want to logout?");
+    if (logout) {
+        window.location.href = '../login/login.html';
     }
 }

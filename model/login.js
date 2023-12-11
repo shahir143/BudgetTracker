@@ -20,7 +20,11 @@ const user=sequelize.define('users',{
         type:Sequelize.STRING,
         allowNull:false,
     },
-    premium: {
+    totalexpenses:{
+        type:Sequelize.INTEGER,
+        defaultValue:0,
+    },
+    premium:{
         type: Sequelize.BOOLEAN,
         defaultValue: false
     }    

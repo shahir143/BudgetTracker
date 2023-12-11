@@ -19,7 +19,6 @@ exports.authorizationToken = async (req, res, next) => {
         if (!loggedUser) {
             return res.status(401).json({ message: "User not found" });
         }
-        
         req.user = loggedUser;
         next();
 

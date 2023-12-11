@@ -19,7 +19,7 @@ exports.purchasePremium = async (req, res) => {
             amount: 2500,
             currency: "INR"
         };
-        
+
         const order = await rzp.orders.create(options);
         // Create the record in the database
         const orderData = await Order.create({
@@ -46,7 +46,7 @@ exports.updateTransactionStatus = async (req, res) => {
         }
         await sequelize.transaction(async (t) => {
             await Promise.all([
-                users.update({ ispremiumuser: true }, { where: { id: orderData.userId }, transaction: t }),
+                users.update({ premium: true }, { where: { id: orderData.userId }, transaction: t }),
                 ordersDB.update(
                     { paymentId: payment_id, status: "SUCCESS" },
                     { where: { orderId: order_id }, transaction: t }

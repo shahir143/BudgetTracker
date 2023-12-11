@@ -5,6 +5,7 @@ require('dotenv').config();
 const userRoute = require('./routers/user');
 const expenseRoute=require('./routers/expense')
 const purchaseRoute=require('./routers/purchase')
+const premiumRoute=require('./routers/premium')
 
 const sequelize = require("./util/database");
 const expense=require('./model/expense');
@@ -23,6 +24,7 @@ app.use(cors());
 app.use('/user', userRoute);
 app.use('/expense', expenseRoute);
 app.use('/purchase', purchaseRoute);
+app.use('/premium', premiumRoute);
 
 loginUser.hasMany(expense);
 expense.belongsTo(loginUser);
