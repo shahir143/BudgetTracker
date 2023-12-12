@@ -12,6 +12,7 @@ const sequelize = require("./util/database");
 const expense=require('./model/expense');
 const loginUser =require('./model/login');
 const order = require('./model/order');
+const reset=require('./model/reset');
 
 const app = express();
 
@@ -33,8 +34,12 @@ expense.belongsTo(loginUser);
 loginUser.hasMany(order)
 order.belongsTo(loginUser)
 
+loginUser.hasMany(reset)
+reset.belongsTo(loginUser)
+
 // 404 Middleware
 app.use((req, res, next) => {
+    res.send('<h4>page not found</h4>')
     console.log('404');
     res.status(404).json({ message: '404 Not Found' });
 });
