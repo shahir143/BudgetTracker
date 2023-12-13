@@ -1,6 +1,4 @@
-body {
-    background-color: #f8f9fa;
-  }
+
 
   .container {
     margin-top: 50px;
@@ -15,7 +13,6 @@ body {
 
   h2 {
     color: #007bff;
-    text-align: center;
   }
 
   label {
@@ -42,3 +39,24 @@ body {
   .text-center a:hover {
     text-decoration: underline;
   }
+
+  #title1{
+    color: red;
+  }
+  #title2{
+    color: black;
+  }
+  #title{
+    text-align: left;
+    padding-left: 5rem;
+    padding-top: 2rem;
+    font-size: 40px;
+    background-color: rgb(238, 233, 225);
+    padding-bottom: 2rem;
+  }
+  #bgimage {
+    background-image: url('../images/sinup.avif');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 39.4rem;
+}

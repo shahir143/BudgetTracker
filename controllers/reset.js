@@ -9,7 +9,7 @@ const axios=require('axios');
 let defaultClient=sib.ApiClient.instance;
 
 let apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey=process.env.FORGET_API_KEY;
+apiKey.apiKey=process.env.BREVO_FORGET_API_KEY;
 
 let apiInstance=new sib.TransactionalEmailsApi();
 

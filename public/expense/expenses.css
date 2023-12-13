@@ -223,3 +223,6 @@ body {
   color: rgb(255, 0, 0);
   font-size: 25px;
 }
+#premiumBtn{
+  display: flex;
+}

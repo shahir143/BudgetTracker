@@ -8,7 +8,9 @@ const premiumDiv = document.getElementById('premium-div');
 const logoutBtn = document.getElementById('logout');
 const closeBtn = document.getElementById('closeModal');
 const premiumText = document.getElementById('leaderBtn');
+
 const leaderBoard = document.getElementById('showLeaderboard');
+const downloadList = document.getElementById('Downloadboard');
 const showleader = document.getElementById('leaderboardModal');
 const boardList = document.getElementById('leaderboardList');
 
@@ -17,6 +19,7 @@ form.addEventListener('click', saveData);
 premiumBtn.addEventListener("click", premium);
 logoutBtn.addEventListener("click", serverOut);
 leaderBoard.addEventListener("click", showBoard);
+downloadList.addEventListener('click', showDownloadList);
 closeBtn.addEventListener('click', closeList);
 
 async function saveData(e) {
@@ -142,6 +145,7 @@ async function handlePremiumPayment(response, data) {
         premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
         premiumBtn.removeEventListener("click", premiumRazor);
         premiumBtn.disabled = true;
+        downloadList.style.display="block";
         leaderBoard.style.display = "block";
         showleader.style.display = "block";
     }
@@ -159,6 +163,7 @@ async function displayData() {
         console.log(data.userLogin)
         if (!premiumStatus) {
             premiumText.innerHTML = `<h4 id="premium_text">Join Premium </h4>`;
+            downloadList.style.display="none";
             leaderBoard.style.display = "none";
             showleader.style.display = "none";
         } else {
@@ -182,6 +187,10 @@ async function showBoard() {
 
 function closeList() {
     showleader.style.display = "none";
+    boardList.innerHTML = "";
+}
+function showDownloadList() {
+    downloadList.style.display = "none";
     boardList.innerHTML = "";
 }
 
