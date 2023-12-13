@@ -89,7 +89,7 @@ exports.resetPassword = async (req, res) => {
               const newPassword = password.value;
               const id = "${id}";
               try {
-                axios.post("/resetpassword/" + id, { newPassword: newPasswordValue })
+                axios.post("/password/resetpassword/" + id, { newPassword: newPasswordValue })
                 .then((response) => {
                   if (response.status === 200) {
                     window.location.href = "../../Login/login.html";

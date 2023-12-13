@@ -27,7 +27,7 @@ async function saveData(e) {
     const token = localStorage.getItem('token');
     const obj = { Expenses: userExpenses.value, Description: userDescription.value, Category: userCategory.value };
     try {
-        const { data } = await axios.post(`http://localhost:4000/expense/addExpense`, obj, {
+        const { data } = await axios.post(`/expense/addExpense`, obj, {
              headers: { Authorization: token } 
             });
         displayExpenses(data.data);
@@ -60,7 +60,7 @@ function displayExpenses(data) {
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:4000/expense/delExpense/${id}`, {
+            await axios.delete(`/expense/delExpense/${id}`, {
                 headers: {
                     Authorization: token
                 }
@@ -79,7 +79,7 @@ function displayExpenses(data) {
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:4000/expense/delExpense/${id}`, {
+            await axios.delete(`/expense/delExpense/${id}`, {
                 headers: {
                     Authorization: token
                 }
@@ -106,7 +106,7 @@ async function premium(e) {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-        const { data } = await axios.get('http://localhost:4000/purchase/premiumMember', { 
+        const { data } = await axios.get('/purchase/premiumMember', { 
             headers: { Authorization: token } 
         });
         premiumRazor(data);
@@ -133,7 +133,7 @@ const premiumRazor = async (data) => {
 
 async function handlePremiumPayment(response, data) {
     const token = localStorage.getItem('token');
-    const updateData = await axios.post('http://localhost:4000/purchase/updatedTransactionstatus', {
+    const updateData = await axios.post('/purchase/updatedTransactionstatus', {
         order_id: data.orderData.orderId,
         payment_id: response.razorpay_payment_id,
     }, { headers: { Authorization: token } });
@@ -155,7 +155,7 @@ async function handlePremiumPayment(response, data) {
 
 async function displayData() {
     try {
-        const { data } = await axios.get('http://localhost:4000/expense/Expenses', { headers: { 
+        const { data } = await axios.get('/expense/Expenses', { headers: { 
             Authorization: localStorage.getItem('token') 
         } });
         const premiumStatus = data.isPremium;
@@ -196,7 +196,7 @@ function showDownloadList() {
 
 async function displayLeaderboard() {
     try {
-        const { data } = await axios.get('http://localhost:4000/premium/leaderboard', { headers: { Authorization: localStorage.getItem('token') } });
+        const { data } = await axios.get('/premium/leaderboard', { headers: { Authorization: localStorage.getItem('token') } });
         boardList.innerHTML = "";
         data.leaderBoard.forEach((item) => {
             if (item.premium) {
