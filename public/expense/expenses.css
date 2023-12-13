@@ -76,8 +76,8 @@ html {
 /* Container and Column/Row Styles */
 .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  height: 400px;
   padding: 20px;
 }
 
@@ -85,19 +85,22 @@ html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin-right: 20px; /* Add margin between columns */
 }
 
 .row {
   flex: 1;
   display: flex;
-  flex-direction: row;
+  text-align: center;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border: 1px solid #eaeaea;
-  margin: 10px;
   border-radius: 10px;
-  padding-bottom: 30px;
+  background-color: #f8f8f8;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+  padding: 10px;
 }
 
 /* Form Styles */
@@ -129,6 +132,9 @@ html {
 
 .add-expense-btn {
   width: 90%;
+}
+#add-income{
+  width:90%
 }
 
 /* Additional Styles for Section and Card Elements */

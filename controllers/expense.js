@@ -1,5 +1,20 @@
 const Expense = require('../model/expense');
 const Sequelize= require('../util/database');
+exports.saveIncome=async (req, res) => {
+    let t;
+    try {
+        t = await Sequelize.transaction();
+        const user=req.user;
+        console.log(req.body)
+        const userincome=req.body.income;
+        await user.update({income:userincome},t);
+        await t.commit();
+        res.status(201).json({ success: true, message:"updated"});
+    } catch (error) {
+        await t.rollback();
+        res.status(500).json({ error: 'Error in saving the income' });
+    }
+};
 exports.saveData = async (req, res) => {
     let t;
     try {

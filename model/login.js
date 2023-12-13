@@ -27,7 +27,11 @@ const user=sequelize.define('users',{
     premium:{
         type: Sequelize.BOOLEAN,
         defaultValue: false
-    }    
+    },
+    income:{
+        type:Sequelize.INTEGER,
+        defaultValue:0,
+    },    
 })
 
 module.exports=user;

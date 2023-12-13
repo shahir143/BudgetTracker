@@ -3,6 +3,9 @@ const itemList = document.querySelector("#user-list");
 const userExpenses = document.getElementById('expenses');
 const userDescription = document.getElementById('description');
 const userCategory = document.getElementById('category');
+const incomeAmount = document.getElementById('income-amount');
+const incomeDecr = document.getElementById('income-description')
+const incomeBtn = document.getElementById('add-income')
 const premiumBtn = document.getElementById('premium-button');
 const premiumDiv = document.getElementById('premium-div');
 const logoutBtn = document.getElementById('logout');
@@ -16,12 +19,26 @@ const boardList = document.getElementById('leaderboardList');
 
 window.addEventListener('DOMContentLoaded', displayData);
 form.addEventListener('click', saveData);
+incomeBtn.addEventListener('click', addIncome);
 premiumBtn.addEventListener("click", premium);
 logoutBtn.addEventListener("click", serverOut);
 leaderBoard.addEventListener("click", showBoard);
 downloadList.addEventListener('click', showDownloadList);
 closeBtn.addEventListener('click', closeList);
 
+async function addIncome(e){
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    const obj = { incomeDecription: incomeDecr.value, income: incomeAmount.value };
+    try {
+        const { data } = await axios.post(`/expense/addIncome`, obj, {
+             headers: { Authorization: token } 
+            });
+            console.log(data);
+    } catch (error) {
+        console.error('Error in saving form', error);
+    }
+}
 async function saveData(e) {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -201,7 +218,7 @@ async function displayLeaderboard() {
         data.leaderBoard.forEach((item) => {
             if (item.premium) {
                 const li = document.createElement('li');
-                li.textContent = `Name : ${item.userName}- Expenses: Rs.${item.totalexpenses}`;
+                li.textContent = `Name : ${item.userName}- Expenses: Rs.${item.totalexpenses} - Income:${item.income}`;
                 boardList.appendChild(li);
             }
         });
