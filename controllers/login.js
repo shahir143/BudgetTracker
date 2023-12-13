@@ -2,7 +2,15 @@ const User=require('../model/login');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
-exports.signup = async (req, res, next) => {
+exports.signupPage = (req, res) => {
+    res.sendFile('signup.html', { root: './public/signup' });
+};
+
+exports.loginPage=(req,res)=>{
+    res.sendFile('login.html', { root: './public/login' });
+}
+
+exports.signup = async (req, res,) => {
     try {
         const saltRounds = 10;
         const { email, password } = req.body;

@@ -9,7 +9,7 @@ myForm.addEventListener('submit',async(e)=>{
             email:useremail.value,
             password:userPassword.value
         }
-        const login=await axios.post('/user/login',loginData);
+        const login=await axios.post('/login',loginData);
         alert(login.data.message);
         localStorage.setItem('token',login.data.token);
         window.location.href='../expense/expense.html'

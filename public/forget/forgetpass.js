@@ -9,7 +9,7 @@ async function resetPass(e){
         const reset={
             email:userEmail.value,
         }
-        const response=await axios.post("/password/forgetPassword",reset);
+        const response=await axios.post("http://localhost:4000/password/forgetPassword",reset);
         console.log(response.data);
         if(response.status===201){
             alert("check your mail");

@@ -16,18 +16,18 @@ const reset=require('./model/reset');
 
 const app = express();
 
-// Middleware to parse JSON in the request body
 app.use(bodyParser.json());
 
-// Middleware for CORS (Cross-Origin Resource Sharing)
 app.use(cors());
+app.use(express.static( "public"));
 
-// Routes
-app.use('/user', userRoute);
+app.use('/', userRoute);
 app.use('/expense', expenseRoute);
 app.use('/purchase', purchaseRoute);
 app.use('/premium', premiumRoute);
 app.use('/password',resetRoute);
+
+
 loginUser.hasMany(expense);
 expense.belongsTo(loginUser);
 
