@@ -1,14 +1,14 @@
-
-
   .container {
     margin-top: 50px;
+    width: auto;
   }
 
   .col-md-6 {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 10px 5px 20px rgb(114, 108, 108);
+    border-radius: 20px;
   }
 
   h2 {
@@ -41,10 +41,10 @@
   }
 
   #title1{
-    color: red;
+    color: black;
   }
   #title2{
-    color: black;
+    color: red;
   }
   #title{
     text-align: left;
@@ -59,4 +59,13 @@
     background-size: cover;
     background-repeat: no-repeat;
     height: 39.4rem;
+}
+@media screen and (max-width: 768px){
+  .col-md-6 {
+    margin-top: 30px;
+    width: auto;
+    margin: 20px;
+    box-shadow: 10px 5px 20px rgb(114, 108, 108);
+    border-radius: 20px;
+  } 
 }

@@ -59,21 +59,17 @@ function displayExpenses(data) {
     li.className = "list-group-item";
     li.textContent = `${data.Expenses} - ${data.Category} - ${data.Description} -`;
 
-    let div = document.createElement('div');
-    div.className = "button-group";
-
     let deleteBtn = createButton("DELETE", "btn btn-danger");
     deleteBtn.textContent="DELETE"
     let editBtn = createButton("Edit", "btn btn-info");
     editBtn.id = 'edit';
     editBtn.textContent="EDIT";
 
-    div.appendChild(deleteBtn);
-    div.appendChild(editBtn);
-    li.appendChild(div);
+    li.appendChild(deleteBtn);
+    li.appendChild(editBtn);
 
     deleteBtn.onclick = async (e) => {
-        const target = e.target.parentElement.parentElement;
+        const target = e.target.parentElement;
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
@@ -92,7 +88,7 @@ function displayExpenses(data) {
         userExpenses.value = data.Expenses;
         userDescription.value = data.Description;
         userCategory.value = data.Category;
-        const target = e.target.parentElement.parentElement;
+        const target = e.target.parentElement;
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
@@ -158,7 +154,7 @@ async function handlePremiumPayment(response, data) {
     const premiumData = updateData.data.data.Premium;
     localStorage.setItem("premium", premiumData);
 
-    if (premiumData) {
+    if (premiumData===true) {
         premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
         premiumBtn.removeEventListener("click", premiumRazor);
         premiumBtn.disabled = true;
@@ -179,7 +175,11 @@ async function displayData() {
         localStorage.setItem("premium", premiumStatus);
         console.log(data.userLogin)
         if (!premiumStatus) {
-            premiumText.innerHTML = `<h4 id="premium_text">Join Premium </h4>`;
+            premiumText.innerHTML = `<h4 id="premium_text">Join Premium </h4>
+            <ul >
+            <i id="red">LEADERBOARD</i>
+            <i id="red">MANAGE EXPENSES</i>
+            <i id="red"> DOWNLOAD EXPENSES</i></ul>`;
             downloadList.style.display="none";
             leaderBoard.style.display = "none";
             showleader.style.display = "none";
@@ -206,9 +206,26 @@ function closeList() {
     showleader.style.display = "none";
     boardList.innerHTML = "";
 }
-function showDownloadList() {
-    downloadList.style.display = "none";
-    boardList.innerHTML = "";
+async function showDownloadList() {
+    try{
+    const token =localStorage.getItem('token');
+    const premium=localStorage.getItem('premium');
+    if(premium){
+        const response=await axios.get(`/expense/download`,{
+            headers:{
+                Authorization:token,
+            }
+        })
+        if(response.status==200){
+            const a = document.createElement("a");
+				a.href = response.data.fileURL.Location;
+				a.download = "myExpense.txt";
+				a.click();
+        }
+    }
+    }catch(err){
+        console.log(err)
+    }
 }
 
 async function displayLeaderboard() {
@@ -223,7 +240,7 @@ async function displayLeaderboard() {
             }
         });
     } catch (error) {
-        console.error(error);
+        console.error(error,"error at download");
     }
 }
 

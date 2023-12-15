@@ -2,6 +2,9 @@ const express=require('express');
 const route=express.Router();
 const controllerExpense=require('../controllers/expense');
 const userAuthorization=require('../middleware/authorize');
+const reportController=require('../controllers/report')
+
+route.get('/download',userAuthorization.authorizationToken,reportController.downloadReport);
 
 route.delete('/delExpense/:id',userAuthorization.authorizationToken,controllerExpense.deleteData);
 route.post('/addExpense',userAuthorization.authorizationToken,controllerExpense.saveData);

@@ -1,6 +1,6 @@
-const sib = require("sib-api-v3-sdk");
-const uuid=require("uuid");
-const bcrypt=require('bcrypt');
+const sib = require("sib-api-v3-sdk"); //brevo or sendin blue
+const uuid=require("uuid");//generate a unique string
+const bcrypt=require('bcrypt');//one time encryption hashing and salt algorithm 
 
 const forgetPass=require('../model/reset');
 const User=require('../model/login');
@@ -69,7 +69,8 @@ exports.resetPassword = async (req, res) => {
                 <h2 class="mb-4">ET-FORGET PASSWORD</h2>
                 <form id="myForm">
                   <div class="form-group">
-                    <input type="text" class="form-control" id="password" placeholder="Enter new password" required>
+                    <input type="text" class="form-control" id="password1" placeholder="Enter new password" required>
+                    <input type="text" class="form-control" id="password2" placeholder="re-enter new password" required>
                   </div>
                   <button type="submit" id="submit" class="btn btn-success btn-block">Reset Password</button>
                 </form>
@@ -82,22 +83,32 @@ exports.resetPassword = async (req, res) => {
           <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
           <script>
             const myForm = document.getElementById('myForm');
-            const password = document.getElementById('password');
+            const password1 = document.getElementById('password1');
+            const password2 = document.getElementById('password2');
+
 
             myForm.addEventListener('submit', async (e) => {
-              e.preventDefault();
-              const newPassword = password.value;
-              const id = "${id}";
+            e.preventDefault();
+            
+            const Password1 = password1.value;
+            const Password2 = password2.value;
+            const id = "${id}";
+            if(Password1===Password2){
               try {
-                axios.post("/password/resetpassword/" + id, { newPassword: newPasswordValue })
-                .then((response) => {
-                  if (response.status === 200) {
-                    window.location.href = "../../Login/login.html";
-                  }
-                }).catch (error) {
+                const response = await axios.post("/password/resetpassword/" + id, { password: Password1 })
+  
+                if (response.status === 200) {
+                  window.location.href = "../../Login/login.html";
+                }
+              } catch (error) {
                 console.error("Error resetting password:", error);
               }
-            });
+            }else{
+              alert('Please enter same password)
+            }
+            
+          });
+
           </script>
         </body>
         </html>
