@@ -171,17 +171,17 @@ const premiumRazor = async (data) => {
             order_Id: data.orderData.orderId, 
             handler: async (response) => {
                 const updateData = await axios.post('/purchase/updatedTransactionstatus', {
-                            order_id: data.orderData.orderId,
-                            payment_id: response.razorpay_payment_id,
-                            }, { headers: { Authorization: token } });
-                            const premiumData = updateData.data.data.Premium;
-                            localStorage.setItem("premium", premiumData);
-                            if (localStorage.getItem('premium')==='true') {
-                                premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
-                                premiumBtn.removeEventListener("click", premiumRazor);
-                                premiumBtn.disabled = true;
+                    order_id: data.orderData.orderId,
+                    payment_id: response.razorpay_payment_id,}, 
+                    { headers: { Authorization: token } });
+                const premiumData = updateData.data.data.Premium;
+                localStorage.setItem("premium", premiumData);
+                        if (localStorage.getItem('premium')==='true') {
+                            premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
+                            premiumBtn.removeEventListener("click", premiumRazor);
+                            premiumBtn.disabled = true;
                             }
-                            alert(" congrats!You are a premium user");
+                    alert(" congrats!You are a premium user");
             } 
         };
         const rzpl = new window.Razorpay(options);
