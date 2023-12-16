@@ -208,10 +208,7 @@ body {
   font-size: 40px;
   color: red;
 }
-#premium_text{
-  color: rgb(255, 0, 0);
-  font-size: 25px;
-}
+
 #premiumBtn{
   display: flex;
   flex-wrap: wrap;
