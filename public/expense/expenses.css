@@ -237,14 +237,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 43.2rem;
-}
-#red {
-  color: red;
-  justify-content: center;
-  list-style-type: none;
-  display: block; 
-  text-align: center;
+  height: 45rem ;
 }
 
 /* Responsive Styles */

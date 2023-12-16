@@ -44,3 +44,14 @@ function uploadToS3(data,name){
 		});
 	});
 }
+exports.getDownlist=async(req,res)=>{
+    const user=req.user.id;
+    try{
+        const response = await reports.findAll({
+            where: { userId: user}
+        });
+        res.status(200).json({sucess:true, message:"sucessfully get previous reports", data: response});
+    }catch(err){
+        res.status(500).json({sucess:false, message:"failed to get previous reports"});
+    }
+}

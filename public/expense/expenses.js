@@ -8,24 +8,59 @@ const incomeDecr = document.getElementById('income-description')
 const incomeBtn = document.getElementById('add-income')
 const premiumBtn = document.getElementById('premium-button');
 const premiumDiv = document.getElementById('premium-div');
+const manageBtn=document.getElementById('manage');
 const logoutBtn = document.getElementById('logout');
 const closeBtn = document.getElementById('closeModal');
 const premiumText = document.getElementById('leaderBtn');
 
-const leaderBoard = document.getElementById('showLeaderboard');
-const downloadList = document.getElementById('Downloadboard');
-const showleader = document.getElementById('leaderboardModal');
+const leaderBoardBtn = document.getElementById('showLeaderboard');
+const downloadListBtn = document.getElementById('Downloadboard');
+const showleaderBtn = document.getElementById('leaderboardModal');
 const boardList = document.getElementById('leaderboardList');
+const home=document.getElementById('Home');
+
 
 window.addEventListener('DOMContentLoaded', displayData);
 form.addEventListener('click', saveData);
 incomeBtn.addEventListener('click', addIncome);
 premiumBtn.addEventListener("click", premium);
 logoutBtn.addEventListener("click", serverOut);
-leaderBoard.addEventListener("click", showBoard);
-downloadList.addEventListener('click', showDownloadList);
+leaderBoardBtn.addEventListener("click", showBoard);
+downloadListBtn.addEventListener('click', showDownloadList);
 closeBtn.addEventListener('click', closeList);
+manageBtn.addEventListener('click',managePage);
 
+home.addEventListener('click', function() {
+    alert('You are in home page')
+});
+async function displayData() {
+    try {
+        const { data } = await axios.get('/expense/Expenses', { headers: { 
+            Authorization: localStorage.getItem('token') 
+        } });
+        console.log(data);
+        const premiumStatus = data.premium;
+        localStorage.setItem("premium", premiumStatus);
+        console.log(data.userLogin)
+        if (localStorage.getItem("premium")==='false') {
+            showleaderBtn.style.display = "none";
+            alert('You are not premium member')
+        } else {
+            premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
+            premiumBtn.removeEventListener("click", premiumRazor);
+            premiumBtn.disabled = true;
+            showleaderBtn.style.display = "none";
+            alert('You are premium member! enjoy the features')
+        }
+        const usersData = data.data;
+        console.log(usersData)
+        for (let i = 0; i < usersData.length; i++) {
+            displayExpenses(usersData[i]);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
 async function addIncome(e){
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -122,95 +157,76 @@ async function premium(e) {
         const { data } = await axios.get('/purchase/premiumMember', { 
             headers: { Authorization: token } 
         });
-        premiumRazor(data);
+        await premiumRazor(data);
     } catch (error) {
         console.error(error);
     }
 }
 
 const premiumRazor = async (data) => {
+    const token = localStorage.getItem('token');
     try {
-        
         const options = { 
             key: data.key_id, 
             order_Id: data.orderData.orderId, 
-            handler: async (response) => handlePremiumPayment(response, data) 
+            handler: async (response) => {
+                const updateData = await axios.post('/purchase/updatedTransactionstatus', {
+                            order_id: data.orderData.orderId,
+                            payment_id: response.razorpay_payment_id,
+                            }, { headers: { Authorization: token } });
+                            const premiumData = updateData.data.data.Premium;
+                            localStorage.setItem("premium", premiumData);
+                            if (localStorage.getItem('premium')==='true') {
+                                premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
+                                premiumBtn.removeEventListener("click", premiumRazor);
+                                premiumBtn.disabled = true;
+                            }
+                            alert(" congrats!You are a premium user");
+            } 
         };
         const rzpl = new window.Razorpay(options);
         await rzpl.open();
-        rzpl.on('payment.failed', (failedData) => console.log(failedData) || alert("SOMETHING WENT WRONG"));
+        rzpl.on('payment.failed', async(failedData) => {
+            console.log(failedData.error.metadata)
+            const data = await axios.post("/purchase/failedTransaction", failedData.error.metadata, {
+				headers: { Authorization: token },
+			});
+            alert(":) Sorry! payment  failed try again")
+        })
     } catch (error) {
         console.error(error);
     }
 };
-
-async function handlePremiumPayment(response, data) {
-    const token = localStorage.getItem('token');
-    const updateData = await axios.post('/purchase/updatedTransactionstatus', {
-        order_id: data.orderData.orderId,
-        payment_id: response.razorpay_payment_id,
-    }, { headers: { Authorization: token } });
-
-    const premiumData = updateData.data.data.Premium;
-    localStorage.setItem("premium", premiumData);
-
-    if (premiumData===true) {
-        premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
-        premiumBtn.removeEventListener("click", premiumRazor);
-        premiumBtn.disabled = true;
-        downloadList.style.display="block";
-        leaderBoard.style.display = "block";
-        showleader.style.display = "block";
-    }
-
-    alert("You are a premium user");
-};
-
-async function displayData() {
-    try {
-        const { data } = await axios.get('/expense/Expenses', { headers: { 
-            Authorization: localStorage.getItem('token') 
-        } });
-        const premiumStatus = data.isPremium;
-        localStorage.setItem("premium", premiumStatus);
-        console.log(data.userLogin)
-        if (!premiumStatus) {
-            premiumText.innerHTML = `<h4 id="premium_text">Join Premium </h4>
-            <ul >
-            <i id="red">LEADERBOARD</i>
-            <i id="red">MANAGE EXPENSES</i>
-            <i id="red"> DOWNLOAD EXPENSES</i></ul>`;
-            downloadList.style.display="none";
-            leaderBoard.style.display = "none";
-            showleader.style.display = "none";
-        } else {
-            premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
-            premiumBtn.removeEventListener("click", premiumRazor);
-            premiumBtn.disabled = true;
+async function managePage(e){
+    try{
+        if(localStorage.getItem('premium')==='true'){
+            window.location.href="./manage.html"
+        }else{
+            alert("Please purchase premium for manage");
         }
-        const usersData = data.data;
-        for (let i = 0; i < usersData.length; i++) {
-            displayExpenses(usersData[i]);
-        }
-    } catch (error) {
-        console.error(error);
+    }catch(e){
+        console.log(e)
     }
 }
 
+
 async function showBoard() {
-    showleader.style.display = "block";
+    if(localStorage.getItem('premium')==='true'){
+    showleaderBtn.style.display = "block";
     displayLeaderboard();
+    }else{
+        alert("Please purchase premium for leaderBoard");
+    }
 }
 
 function closeList() {
-    showleader.style.display = "none";
+    showleaderBtn.style.display = "none";
     boardList.innerHTML = "";
 }
 async function showDownloadList() {
     try{
     const token =localStorage.getItem('token');
-    const premium=localStorage.getItem('premium');
-    if(premium){
+    if(localStorage.getItem('premium')==='true'){
         const response=await axios.get(`/expense/download`,{
             headers:{
                 Authorization:token,
@@ -222,6 +238,8 @@ async function showDownloadList() {
 				a.download = "myExpense.txt";
 				a.click();
         }
+    }else{
+        alert("Please purchase premium for Downloading expenses");
     }
     }catch(err){
         console.log(err)

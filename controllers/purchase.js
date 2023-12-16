@@ -59,3 +59,33 @@ exports.updateTransactionStatus = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+exports.failedTransactions=async(req,res)=>{
+    console.log("failed data",req)
+    try{
+        const orderId = req.body.order_id;
+		const paymentId = req.body.payment_id;
+
+        const orderData = await ordersDB.findOne({ where: { orderId: orderId } });
+
+        if (!orderData) {
+            return res.status(400).json({success:false, message: 'Order not found' });
+        }
+        await sequelize.transaction(async (t) => {
+            await Promise.all([
+                users.update({ premium: false }, { where: { id: orderData.userId }, transaction: t }),
+                ordersDB.update(
+                    { paymentId: paymentId, status: "FAILED" },
+                    { where: { orderId: orderId }, transaction: t }
+                )
+            ]);
+        });
+
+		res.status(200).json({
+			message: "Failed to purchase. Initiating rollback",data: { Premium: false },
+		});
+	}catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+
+}
