@@ -2,6 +2,8 @@ const User=require('../model/login');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
+
+exports.wrongpage=(req,res)=> res.send("404 File not found")
 exports.signupPage = (req, res) => {
     res.sendFile('signup.html', { root: './public/signup' });
 };

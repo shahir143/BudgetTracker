@@ -44,7 +44,7 @@ async function displayData() {
         console.log(data.userLogin)
         if (localStorage.getItem("premium")==='false') {
             showleaderBtn.style.display = "none";
-            alert('You are not premium member')
+            alert('You are not premium member!')
         } else {
             premiumDiv.innerHTML = `<h4 id="premium_user">Premium User</h4>`;
             premiumBtn.removeEventListener("click", premiumRazor);
