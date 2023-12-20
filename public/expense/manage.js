@@ -5,6 +5,7 @@ const pagination = document.getElementById("pagination-div");
 const income = document.getElementById('dash-income');
 const expense = document.getElementById('dash-expense');
 const savings = document.getElementById('dash-savings');
+const API_BASE_URL = 'http://3.110.88.166:4000';
 
 itemperPage.addEventListener("change", setLimit);
 window.addEventListener('DOMContentLoaded', loadPage);
@@ -31,7 +32,7 @@ async function loadPage(e) {
 async function getpreviousDownloads() {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/expense/getprevList', { headers: { Authorization: token } });
+        const response = await axios.get(`${API_BASE_URL}/expense/getprevList`, { headers: { Authorization: token } });
         for (let i = 0; i < response.data.data.length; i++) {
             const data = {
                 url: response.data.data[i].fileUrl,
@@ -57,7 +58,7 @@ async function createLink(data) {
 async function updateDashBoard() {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get(`/premium/showdashboard`, { headers: { Authorization: token } });
+        const response = await axios.get(`${API_BASE_URL}/premium/showdashboard`, { headers: { Authorization: token } });
         const expenseData = {
             income: response.data.data.income,
             expense: response.data.data.totalexpenses
@@ -95,7 +96,7 @@ async function getpagination(page) {
         const token = localStorage.getItem('token');
         const count = localStorage.getItem('limit');
         userList.innerHTML = "";
-        const response = await axios.get(`/expense/paginationExpense?count=${count}&page=${currentPage}`, {
+        const response = await axios.get(`${API_BASE_URL}/expense/paginationExpense?count=${count}&page=${currentPage}`, {
             headers: { Authorization: token }
         });
         await showPage(response.data.data);
@@ -168,7 +169,7 @@ function displayExpenses(data) {
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`/expense/delExpense/${id}`, {
+            await axios.delete(`${API_BASE_URL}/expense/delExpense/${id}`, {
                 headers: { Authorization: token }
             });
             userList.removeChild(target);

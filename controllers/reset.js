@@ -32,7 +32,7 @@ try{
       SendSmtpEmail.sender=sender;
       SendSmtpEmail.to=to;
       SendSmtpEmail.subject='reset password'
-      SendSmtpEmail.textContent=`click the following link to reset http://localhost:4000/password/resetpassword/${uuidToken}`;
+      SendSmtpEmail.textContent=`click the following link to reset http://3.110.88.166:4000/password/resetpassword/${uuidToken}`;
       
       const emailResponse=await apiInstance.sendTransacEmail(SendSmtpEmail);
       console.log(emailResponse)
@@ -95,7 +95,7 @@ exports.resetPassword = async (req, res) => {
             const id = "${id}";
             if(Password1===Password2){
               try {
-                const response = await axios.post("/password/resetpassword/" + id, { password: Password1 })
+                const response = await axios.post("http://3.110.88.166:4000/password/resetpassword/" + id, { password: Password1 })
   
                 if (response.status === 200) {
                   window.location.href = "../../Login/login.html";

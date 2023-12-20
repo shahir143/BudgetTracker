@@ -18,7 +18,7 @@ const downloadListBtn = document.getElementById('Downloadboard');
 const showleaderBtn = document.getElementById('leaderboardModal');
 const boardList = document.getElementById('leaderboardList');
 const home=document.getElementById('Home');
-
+const API_BASE_URL = 'http://3.110.88.166:4000';
 
 window.addEventListener('DOMContentLoaded', displayData);
 form.addEventListener('click', saveData);
@@ -35,7 +35,7 @@ home.addEventListener('click', function() {
 });
 async function displayData() {
     try {
-        const { data } = await axios.get('/expense/Expenses', { headers: { 
+        const { data } = await axios.get(`${API_BASE_URL}/expense/Expenses`, { headers: { 
             Authorization: localStorage.getItem('token') 
         } });
         console.log(data);
@@ -66,7 +66,7 @@ async function addIncome(e){
     const token = localStorage.getItem('token');
     const obj = { incomeDecription: incomeDecr.value, income: incomeAmount.value };
     try {
-        const { data } = await axios.post(`/expense/addIncome`, obj, {
+        const { data } = await axios.post(`${API_BASE_URL}/expense/addIncome`, obj, {
              headers: { Authorization: token } 
             });
             console.log(data);
@@ -79,7 +79,7 @@ async function saveData(e) {
     const token = localStorage.getItem('token');
     const obj = { Expenses: userExpenses.value, Description: userDescription.value, Category: userCategory.value };
     try {
-        const { data } = await axios.post(`/expense/addExpense`, obj, {
+        const { data } = await axios.post(`${API_BASE_URL}/expense/addExpense`, obj, {
              headers: { Authorization: token } 
             });
         displayExpenses(data.data);
@@ -108,7 +108,7 @@ function displayExpenses(data) {
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`/expense/delExpense/${id}`, {
+            await axios.delete(`${API_BASE_URL}/expense/delExpense/${id}`, {
                 headers: {
                     Authorization: token
                 }
@@ -127,7 +127,7 @@ function displayExpenses(data) {
         const id = data.id;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`/expense/delExpense/${id}`, {
+            await axios.delete(`${API_BASE_URL}/expense/delExpense/${id}`, {
                 headers: {
                     Authorization: token
                 }
@@ -154,7 +154,7 @@ async function premium(e) {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-        const { data } = await axios.get('/purchase/premiumMember', { 
+        const { data } = await axios.get(`${API_BASE_URL}/purchase/premiumMember`, { 
             headers: { Authorization: token } 
         });
         await premiumRazor(data);
@@ -170,7 +170,7 @@ const premiumRazor = async (data) => {
             key: data.key_id, 
             order_Id: data.orderData.orderId, 
             handler: async (response) => {
-                const updateData = await axios.post('/purchase/updatedTransactionstatus', {
+                const updateData = await axios.post(`${API_BASE_URL}/purchase/updatedTransactionstatus`, {
                     order_id: data.orderData.orderId,
                     payment_id: response.razorpay_payment_id,}, 
                     { headers: { Authorization: token } });
@@ -188,7 +188,7 @@ const premiumRazor = async (data) => {
         await rzpl.open();
         rzpl.on('payment.failed', async(failedData) => {
             console.log(failedData.error.metadata)
-            const data = await axios.post("/purchase/failedTransaction", failedData.error.metadata, {
+            const data = await axios.post(`${API_BASE_URL}/purchase/failedTransaction`, failedData.error.metadata, {
 				headers: { Authorization: token },
 			});
             alert(":) Sorry! payment  failed try again")
@@ -227,7 +227,7 @@ async function showDownloadList() {
     try{
     const token =localStorage.getItem('token');
     if(localStorage.getItem('premium')==='true'){
-        const response=await axios.get(`/expense/download`,{
+        const response=await axios.get(`${API_BASE_URL}/expense/download`,{
             headers:{
                 Authorization:token,
             }
@@ -248,7 +248,7 @@ async function showDownloadList() {
 
 async function displayLeaderboard() {
     try {
-        const { data } = await axios.get('/premium/leaderboard', { headers: { Authorization: localStorage.getItem('token') } });
+        const { data } = await axios.get(`${API_BASE_URL}/premium/leaderboard`, { headers: { Authorization: localStorage.getItem('token') } });
         boardList.innerHTML = "";
         data.leaderBoard.forEach((item) => {
             if (item.premium) {
