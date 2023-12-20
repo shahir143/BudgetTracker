@@ -43,7 +43,7 @@ report.belongsTo(loginUser);
 
 // Sync models with the database
 sequelize.sync().then(() => {
-    console.log('Server started on port 4000');
+    console.log('Server started on port 4000 in Jenkins');
     app.listen(4000);
 }).catch(err => {
     console.error('Error syncing with database:', err);
