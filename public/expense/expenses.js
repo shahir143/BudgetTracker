@@ -50,7 +50,7 @@ async function displayData() {
             premiumBtn.removeEventListener("click", premiumRazor);
             premiumBtn.disabled = true;
             showleaderBtn.style.display = "none";
-            alert('Welcome!, Enjoy the features')
+            alert('HELLO!, Enjoy the features')
         }
         const usersData = data.data;
         console.log(usersData)
